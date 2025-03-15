@@ -3,7 +3,7 @@ import './App.css';
 
 function App() {
   return (
-    <div className="bg-blue-500 text-white p-4">
+    <div className="bg-blue-700 text-white px-10 py-5">
       <h1>Hello, Tailwind CSS!</h1>
     </div>
   );
