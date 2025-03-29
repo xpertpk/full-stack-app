@@ -4,10 +4,15 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
+const cors = require("cors");
 
 dotenv.config();
 
 const app = express();
+
+// Enable CORS for all origins
+app.use(cors());
+
 app.use(bodyParser.json());
 
 // MySQL Database Connection
@@ -30,7 +35,7 @@ db.connect((err) => {
 const verifyToken = (req, res, next) => {
   const token = req.headers["authorization"]?.split(" ")[1];
   if (!token) return res.status(403).json({ message: "Token is required" });
-  
+
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) return res.status(401).json({ message: "Invalid Token" });
     req.user = decoded;
@@ -41,11 +46,11 @@ const verifyToken = (req, res, next) => {
 // Signup Route
 app.post("/signup", async (req, res) => {
   const { firstname, lastname, email, password, user_type, gender, photo, mobile, address, city, state, postcode, country } = req.body;
-  
+
   db.query("SELECT * FROM users WHERE email = ?", [email], async (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
     if (results.length > 0) return res.status(400).json({ message: "Email already exists" });
-    
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     db.query(
@@ -71,10 +76,28 @@ app.post("/login", (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(401).json({ message: "Invalid email or password" });
 
-    const token = jwt.sign({ id: user.id, email: user.email, user_type: user.user_type }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    res.json({ token });
+    // Create the JWT token
+    const token = jwt.sign(
+      { id: user.id, email: user.email, user_type: user.user_type },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    // Return both the token and the user data
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        firstname: user.firstname,
+        lastname: user.lastname,
+        email: user.email,
+        user_type: user.user_type,
+        // Add any other user data you want to send
+      }
+    });
   });
 });
+
 
 // Get User Profile (Authenticated)
 app.post("/profile", verifyToken, (req, res) => {
@@ -90,6 +113,11 @@ app.post("/users", verifyToken, (req, res) => {
     if (err) return res.status(500).json({ error: err.message });
     res.json(results);
   });
+});
+
+app.post("/logout", (req, res) => {
+  // Typically, JWT tokens are stateless, so logging out is done on the client side by deleting the token.
+  res.json({ message: "Logged out successfully" });
 });
 
 const PORT = process.env.PORT || 5000;
