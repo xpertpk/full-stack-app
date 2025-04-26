@@ -16,7 +16,7 @@ const Login = () => {
     try {
       const response = await api.post("/login", { email, password });
       login(response.data.token, response.data.user);
-      navigate("/profile"); // <-- use navigate instead of history.push
+      navigate("/"); // <-- use navigate instead of history.push
     } catch (err) {
       setError("Invalid credentials. Please try again.");
     }
