@@ -1,27 +1,36 @@
+// src/App.tsx
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";  // Import Navigate for redirection
-import Signup from "./pages/Signup";
-import Login from "./pages/Login";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./components/AuthProvider";
+import PrivateRoute from "./components/PrivateRoute"; // we'll talk about this too
+import Login from "./components/Login";
+import Signup from "./components/Signup";
+import Profile from "./components/Profile";
 import Dashboard from "./pages/Dashboard";
 
 // Function to check if the user is logged in
 const isLoggedIn = () => {
-  // Check for a token in localStorage (or any other way you're tracking login status)
   return localStorage.getItem("token") !== null;
 };
 
 const App = () => {
   return (
-    <Router>
-      <Routes>
-        {/* Redirect to Dashboard if logged in, otherwise to Login page */}
-        <Route path="/" element={isLoggedIn() ? <Dashboard /> : <Navigate to="/login" />} />
-        
-        {/* Signup and Login routes */}
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Redirect to Dashboard if logged in, otherwise to Login page */}
+          <Route path="/" element={isLoggedIn() ? <Dashboard /> : <Navigate to="/login" />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/profile" element={
+            <PrivateRoute>
+              <Profile />
+            </PrivateRoute>
+          } />
+          {/* Add more routes if needed */}
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 };
 

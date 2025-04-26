@@ -92,6 +92,14 @@ app.post("/login", (req, res) => {
         lastname: user.lastname,
         email: user.email,
         user_type: user.user_type,
+        gender: user.gender,
+        photo: user.photo,
+        mobile: user.mobile,
+        address: user.address,
+        city: user.city,
+        state: user.state,
+        passcode: user.passcode,
+        country: user.country,
         // Add any other user data you want to send
       }
     });
