@@ -23,25 +23,45 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">Login</button>
-      </form>
-      {error && <p className="error">{error}</p>}
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="bg-white p-6 rounded-lg shadow-md w-96">
+        <h2 className="text-xl font-bold mb-4 text-center">Login</h2>
+        <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <input
+            className="w-full p-2 border rounded"
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          </div>
+          <div className="mb-4">
+          <input
+            className="w-full p-2 border rounded"
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          </div>
+          <button
+            type="submit"
+            className="w-full p-2 bg-green-500 text-white rounded mt-4"
+          >
+            Login
+          </button>
+        </form>
+        {error && <p className="error">{error}</p>}
+        <p className="mt-4 text-center text-sm">
+          Don't have an account?{" "}
+          <a href="/signup" className="text-blue-500 font-semibold">
+            Sign up here
+          </a>
+        </p>
+      </div>
     </div>
   );
 };
